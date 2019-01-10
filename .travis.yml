@@ -1,0 +1,23 @@
+---
+sudo: required
+dist: xenial
+
+language: go
+service:
+  - docker
+
+before_install:
+  - pip install --user yamllint
+  - ./.travis/update-docker.sh
+  - make travis
+
+before_script:
+  - sudo mount --make-rshared /
+  - sudo mount --make-rshared /sys
+  - sudo mount --make-rshared /var/run
+
+script:
+  - yamllint -c .yamllint.yml $(git ls-files '*.yaml' '*.yml')
+  - make all
+  - make run
+  - make test

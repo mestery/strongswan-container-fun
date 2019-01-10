@@ -1,0 +1,9 @@
+FROM centos
+MAINTAINER mestery@mestery.com
+
+ARG REPO=release
+
+RUN yum -y update && \
+    yum -y install sudo iproute && \
+    yum clean all && \
+    rm -rf /var/cache/yum

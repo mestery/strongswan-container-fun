@@ -1,0 +1,6 @@
+FROM strongswan-container-fun/redis-ha-strongswan
+MAINTAINER mestery@mestery.com
+
+COPY startfarend.sh /
+
+ENTRYPOINT /startfarend.sh
