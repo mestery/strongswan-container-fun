@@ -41,7 +41,7 @@ jitike {
 
     # Interval in seconds to automatically balance handled segments between
     # nodes. Set to 0 to disable.
-    # autobalance = 0
+    autobalance = 0
 
     fifo_interface = yes
     #heartbeat_delay = 1000
