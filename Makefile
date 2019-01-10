@@ -68,8 +68,7 @@ travis:
 # NOTE: We do not run ha-scale-vpn by default here because it has issues in travis-ci.
 #       See #31 for more details.
 .PHONY: run
-run:
-	@echo "Passsed"
+run: run-ha-scale-vpn run-redis-ha
 
 # NOTE: We do not test ha-scale-vpn by default here because it has issues in travis-ci.
 #       See #31 for more details.
