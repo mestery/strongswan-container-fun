@@ -4,6 +4,6 @@ MAINTAINER mestery@mestery.com
 ARG REPO=release
 
 RUN yum -y update && \
-    yum -y install sudo iproute && \
+    yum -y install sudo iproute epel-release net-tools socat iperf tcpdump && \
     yum clean all && \
     rm -rf /var/cache/yum
