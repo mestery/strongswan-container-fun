@@ -6,6 +6,8 @@
 StrongSwan for Docker containers
 ================================
 
+This is used to test StrongSwan HA in Docker containers.
+
 Building, running, testing
 ==========================
 
