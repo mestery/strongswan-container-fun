@@ -38,7 +38,7 @@ ha {
 
     # Interval in seconds to automatically balance handled segments between
     # nodes. Set to 0 to disable.
-    # autobalance = 0
+    autobalance = 0
 
     fifo_interface = yes
     #heartbeat_delay = 1000
@@ -146,9 +146,6 @@ keepalived
 
 mkdir -p /etc/ipsec.d/run
 ipsec start
-
-# Turn on control of segment one for this node, making it the master
-echo +1 > /var/run/charon.ha
 
 # If this script is run via the Dockerfile, we'd want the below at the end. But
 # in the case of the ha-scale-vpn containers, we run this script via a "docker
