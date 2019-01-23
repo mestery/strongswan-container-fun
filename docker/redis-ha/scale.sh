@@ -33,7 +33,8 @@ ip2dec () {
 # The start IP address.
 # .FIXME: Should probably source env.sh from the same directory and get it
 #         from there rather than hard coding here.
-STARTIP=10.122.220.1
+STARTIP=10.124.220.1
+
 # The decimal version of the above
 ADDRESS=$(ip2dec ${STARTIP})
 
