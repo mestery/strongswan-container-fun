@@ -1,0 +1,8 @@
+FROM alpine:3.7
+MAINTAINER mestery@mestery.com
+
+RUN apk --no-cache add wget curl coreutils netcat-openbsd bash tcpdump
+
+ADD remote.sh /
+
+ENTRYPOINT ["/remote.sh"]

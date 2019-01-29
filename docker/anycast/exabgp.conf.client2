@@ -1,0 +1,15 @@
+neighbor 10.199.199.40 {
+	router-id 10.199.199.22;
+	local-address 10.199.199.22;
+	local-as 65040;
+	peer-as 65040;
+
+	api services {
+		processes [ watch-loghost ];
+	}
+}
+
+process watch-loghost {
+	encoder text;
+	run python -m exabgp healthcheck --cmd "ls /" --no-syslog --label loghost --withdraw-on-down --ip 10.199.199.2/32;
+}
