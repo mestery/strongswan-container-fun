@@ -24,6 +24,25 @@ The configuration of the container is handled by the `env.list` file found
 in this directory. To change this configuration, you can modify this file or
 pass these individually on the command line when launching this container.
 
-The configuration roughly follows what is found on
-[this](https://software.intel.com/en-us/articles/get-started-with-ipsec-acceleration-in-the-fdio-vpp-project)
-page.
+Network Layout
+--------------
+
+The built containers are networked as follows:
+
+![Site Map](./docs/diagrams/anycast_vpn.png)
+
+Accessing the nodes
+-------------------
+
+To access the Quagga node:
+
+```
+docker exec -it quagga telnet 127.0.0.1 2605
+```
+
+From there, you can examine the BGP session and routes:
+
+```
+show bgp summary
+show ip bgp
+```

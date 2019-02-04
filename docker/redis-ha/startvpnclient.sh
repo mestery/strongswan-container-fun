@@ -16,10 +16,10 @@ conn %default
 
 conn net-net
         type=tunnel
-        right=${CLUSTERIP}
-        rightsubnet=${VPN_SUBNET}/${VPN_SUBNET_MASK}
+        right=${SSWAN_ANYCAST_IP}
+        rightsubnet=0.0.0.0/0
         rightauth=psk
-        left=${CLIENT_IP}
+        left=${QUAGGA_C_IP}
         leftauth=psk
         auto=add
 EOL
@@ -29,6 +29,10 @@ cat >/tmp/ipsec.secrets << EOL
 : PSK "Vpp123"
 EOL
 sudo mv /tmp/ipsec.secrets /etc/ipsec.secrets
+
+# Modify the default route
+route delete default
+route add default gw 10.124.223.251
 
 mkdir -p /etc/ipsec.d/run
 ipsec start && sleep 5
