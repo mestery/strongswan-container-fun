@@ -31,9 +31,12 @@ charon {
 }
 EOL
 
+# Remove the HA plugin
+rm -f /etc/strongswan.d/charon/ha.conf
+
 # Configure HA mode
-cat > /etc/strongswan.d/charon/ha.conf << EOL
-ha {
+cat > /etc/strongswan.d/charon/jitike.conf << EOL
+jitike {
     load = yes
 
     # Interval in seconds to automatically balance handled segments between
@@ -59,6 +62,10 @@ ha {
 
     pools {
       testpool = 10.223.220.0/22
+    }
+
+    redis {
+      hostname = "${REDIS_SERVER_IP}"
     }
 }
 EOL
