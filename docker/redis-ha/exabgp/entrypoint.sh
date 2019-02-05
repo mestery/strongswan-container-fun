@@ -18,11 +18,17 @@ if [ "$1" == 'exabgp' ]; then
   if [ -f /usr/etc/exabgp/exabgp.conf.server ] ; then
     cp /usr/etc/exabgp/exabgp.conf.server /usr/etc/exabgp/exabgp.conf
   fi
-  if [ -f /usr/etc/exabgp/exabgp.conf.ha1 ] ; then
-    cp /usr/etc/exabgp/exabgp.conf.ha1 /usr/etc/exabgp/exabgp.conf
+  if [ -f /usr/etc/exabgp/exabgp.conf.ha1-master ] ; then
+    cp /usr/etc/exabgp/exabgp.conf.ha1-master /usr/etc/exabgp/exabgp.conf
   fi
-  if [ -f /usr/etc/exabgp/exabgp.conf.ha2 ] ; then
-    cp /usr/etc/exabgp/exabgp.conf.ha2 /usr/etc/exabgp/exabgp.conf
+  if [ -f /usr/etc/exabgp/exabgp.conf.ha1-slave ] ; then
+    cp /usr/etc/exabgp/exabgp.conf.ha1-slave /usr/etc/exabgp/exabgp.conf
+  fi
+  if [ -f /usr/etc/exabgp/exabgp.conf.ha2-master ] ; then
+    cp /usr/etc/exabgp/exabgp.conf.ha2-master /usr/etc/exabgp/exabgp.conf
+  fi
+  if [ -f /usr/etc/exabgp/exabgp.conf.ha2-slave ] ; then
+    cp /usr/etc/exabgp/exabgp.conf.ha2-slave /usr/etc/exabgp/exabgp.conf
   fi
 
   # Modify the default route

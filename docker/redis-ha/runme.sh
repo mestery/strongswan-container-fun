@@ -16,9 +16,11 @@
 # shellcheck disable=SC1091
 source env.list
 
-SERVERIMAGE1=$1
-SERVERIMAGE2=$2
-CLIENTIMAGE=$3
+HA1_MASTER_IMAGE=$1
+HA1_SLAVE_IMAGE=$2
+HA2_MASTER_IMAGE=$3
+HA2_SLAVE_IMAGE=$4
+CLIENTIMAGE=$5
 
 # Create the redis network
 echo "Looking for ${REDIS_NETWORK}"
@@ -60,19 +62,25 @@ docker exec -it quagga route add -host 10.15.15.15/32 dev eth0
 docker network connect --ip "${QUAGGA_Q_IP}" "${QUAGGA_NETWORK}" "${QUAGGA_NAME}"
 
 # Start the StrongSwan Server containers
-docker run --privileged --mac-address "${SERVER1_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA1_MASTER_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${SERVER1_NAME}" "${SERVERIMAGE1}"
-docker run --privileged --mac-address "${SERVER2_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA1_SLAVE_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${SERVER2_NAME}" "${SERVERIMAGE2}"
+docker run --privileged --mac-address "${SERVER1_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA1_MASTER_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA1_MASTER_NAME}" "${HA1_MASTER_IMAGE}"
+docker run --privileged --mac-address "${SERVER2_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA1_SLAVE_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA1_SLAVE_NAME}" "${HA1_SLAVE_IMAGE}"
+docker run --privileged --mac-address "${SERVER3_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA2_MASTER_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA2_MASTER_NAME}" "${HA2_MASTER_IMAGE}"
+docker run --privileged --mac-address "${SERVER4_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA2_SLAVE_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA2_SLAVE_NAME}" "${HA2_SLAVE_IMAGE}"
 
 # Connect the redis network
-docker network connect --ip "${REDIS_HA1_MASTER_IP}" "${REDIS_NETWORK}" "${SERVER1_NAME}"
-docker network connect --ip "${REDIS_HA1_SLAVE_IP}" "${REDIS_NETWORK}" "${SERVER2_NAME}"
+docker network connect --ip "${REDIS_HA1_MASTER_IP}" "${REDIS_NETWORK}" "${HA1_MASTER_NAME}"
+docker network connect --ip "${REDIS_HA1_SLAVE_IP}" "${REDIS_NETWORK}" "${HA1_SLAVE_NAME}"
+docker network connect --ip "${REDIS_HA2_MASTER_IP}" "${REDIS_NETWORK}" "${HA2_MASTER_NAME}"
+docker network connect --ip "${REDIS_HA2_SLAVE_IP}" "${REDIS_NETWORK}" "${HA2_SLAVE_NAME}"
 
 # Run the client container
 docker run --privileged --mac-address "${CLIENT_MAC}" --net "${QUAGGA_NETWORK}" --ip "${QUAGGA_C_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${CLIENT_NAME}" "${CLIENTIMAGE}"
 
 # Now run the up scripts
-docker exec -it "${SERVER1_NAME}" /startstrongswan1.sh
-docker exec -it "${SERVER2_NAME}" /startstrongswan2.sh
+docker exec -it "${HA1_MASTER_NAME}" /start-ha1-master.sh
+docker exec -it "${HA1_SLAVE_NAME}" /start-ha1-slave.sh
+docker exec -it "${HA2_MASTER_NAME}" /start-ha2-master.sh
+docker exec -it "${HA2_SLAVE_NAME}" /start-ha2-slave.sh
 docker exec -it "${CLIENT_NAME}" /startvpnclient.sh
 
 echo "Finished"

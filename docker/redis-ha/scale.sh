@@ -57,6 +57,7 @@ start() {
     ip link set dev "${NDEV}" netns "${NSPACE}" up
     ip netns exec "${NSPACE}" ip link set dev lo up
     ip netns exec "${NSPACE}" ip address add "${VPNCADDR}"/22 dev "${NDEV}"
+    ip netns exec "${NSPACE}" route add default gw 10.124.223.251
 
     cat >/etc/netns/"${NSPACE}"/ipsec.conf << EOL
 config setup
@@ -72,8 +73,8 @@ conn %default
 
 conn vpn-${NSPACE}
         type=tunnel
-        right=${CLUSTERIP}
-        rightsubnet=${VPN_SUBNET}/${VPN_SUBNET_MASK}
+        right=${SSWAN_ANYCAST_IP}
+        rightsubnet=0.0.0.0/0
         rightauth=psk
         left=${VPNCADDR}
         leftauth=psk

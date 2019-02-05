@@ -2,8 +2,8 @@ FROM strongswan-container-fun/vpnserver-base
 MAINTAINER mestery@mestery.com
 
 ADD exabgp/entrypoint.sh /
-ADD exabgp/exabgp.conf.ha1 /usr/etc/exabgp/
-COPY startstrongswan1.sh /
+ADD exabgp/exabgp.conf.ha2-slave /usr/etc/exabgp/
+COPY start-ha2-slave.sh /
 COPY dummystart.sh /
 
 ENTRYPOINT /dummystart.sh
