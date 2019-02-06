@@ -11,5 +11,5 @@ neighbor 10.35.35.40 {
 
 process watch-loghost {
 	encoder text;
-	run python -m exabgp healthcheck --cmd "ls /" --no-syslog --label loghost --withdraw-on-down --ip 10.15.15.15/32 --next-hop=10.35.35.52;
+	run python -m exabgp healthcheck --cmd "ipsec statusall" --no-syslog --label loghost --withdraw-on-down --ip 10.15.15.15/32 --next-hop=10.35.35.52;
 }
