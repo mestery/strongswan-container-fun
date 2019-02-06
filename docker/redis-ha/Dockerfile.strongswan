@@ -5,7 +5,7 @@ ARG STRONGSWAN_REPO_URL
 ARG STRONGSWAN_COMMIT
 
 RUN yum -y install gmp-devel gperftools-devel gperftools-libs gperftools gperf keepalived && \
-    yum -y install redis hiredis hiredis-devel jansson jansson-devel libevent libevent-devel && \
+    yum -y install redis hiredis hiredis-devel jansson jansson-devel libevent libevent-devel libcurl-devel systemd systemd-devel openssl-devel libgcrypt-devel pam-devel iptables-devel libcap-devel && \
     yum -y group install "Development Tools" && \
     yum clean all && \
     rm -rf /var/cache/yum && \
@@ -14,6 +14,53 @@ RUN yum -y install gmp-devel gperftools-devel gperftools-libs gperftools gperf k
     git fetch && \
     git checkout ${STRONGSWAN_COMMIT} && \
     ./autogen.sh && \
-    ./configure --sysconfdir=/etc --with-piddir=/etc/ipsec.d/run --enable-libipsec --enable-ha --enable-jitike && \
+    ./configure --libdir=/usr/lib --libexecdir=/usr/lib \
+                --sysconfdir=/etc \
+                --with-piddir=/etc/ipsec.d/run \
+                --enable-libipsec \
+                --enable-jitike \
+                --enable-vici \
+                --disable-farp \
+                --enable-swanctl \
+                --enable-sha1 \
+                --enable-save-keys \
+                --enable-connmark \
+                --enable-aesni \
+                --enable-systemd \
+                --enable-addrblock \
+                --enable-agent \
+                --enable-bypass-lan \
+                --enable-ccm \
+                --enable-certexpire \
+                --enable-cmd \
+                --enable-ctr \
+                --enable-curl \
+                --enable-eap-aka \
+                --enable-eap-gtc \
+                --enable-eap-identity \
+                --enable-eap-md5 \
+                --enable-eap-mschapv2 \
+                --enable-eap-radius \
+                --enable-eap-tls \
+                --enable-eap-tnc \
+                --enable-eap-ttls \
+                --enable-error-notify \
+                --enable-gcm \
+                --enable-gcrypt \
+                --enable-ha \
+                --enable-jitike \
+                --enable-led \
+                --enable-lookip \
+                --enable-mediation \
+                --enable-openssl \
+                --enable-pkcs11 \
+                --enable-xauth-eap \
+                --enable-xauth-pam \
+                --enable-blowfish \
+                --enable-rdrand --enable-aesni \
+                --with-capabilities=libcap \
+                --enable-dhcp \
+                --enable-af-alg \
+                --enable-systemd --enable-swanctl && \
     make && \
     make install

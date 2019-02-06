@@ -22,7 +22,7 @@ DOCKER_REDIS_VPNCLIENT=strongswan-container-fun/redis-ha-vpnclient
 
 # The StrongSwan repository and commit to use
 BA_STRONGSWAN_REPO_URL=https://wwwin-github.cisco.com/kmestery/strongswan.git
-BA_STRONGSWAN_COMMIT=redis
+BA_STRONGSWAN_COMMIT=redis-5.5.1dr4
 
 .PHONY: docker-build-redis-ha-strongswan
 docker-build-redis-ha-strongswan: docker-build-base
