@@ -20,7 +20,8 @@ HA1_MASTER_IMAGE=$1
 HA1_SLAVE_IMAGE=$2
 HA2_MASTER_IMAGE=$3
 HA2_SLAVE_IMAGE=$4
-CLIENTIMAGE=$5
+CLIENTIMAGE1=$5
+CLIENTIMAGE2=$6
 
 # Create the redis network
 echo "Looking for ${REDIS_NETWORK}"
@@ -73,14 +74,16 @@ docker network connect --ip "${REDIS_HA1_SLAVE_IP}" "${REDIS_NETWORK}" "${HA1_SL
 docker network connect --ip "${REDIS_HA2_MASTER_IP}" "${REDIS_NETWORK}" "${HA2_MASTER_NAME}"
 docker network connect --ip "${REDIS_HA2_SLAVE_IP}" "${REDIS_NETWORK}" "${HA2_SLAVE_NAME}"
 
-# Run the client container
-docker run --privileged --mac-address "${CLIENT_MAC}" --net "${QUAGGA_NETWORK}" --ip "${QUAGGA_C_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${CLIENT_NAME}" "${CLIENTIMAGE}"
+# Run the client containers
+docker run --privileged --mac-address "${CLIENT1_MAC}" --net "${QUAGGA_NETWORK}" --ip "${QUAGGA_C1_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${CLIENT1_NAME}" "${CLIENTIMAGE1}"
+docker run --privileged --mac-address "${CLIENT2_MAC}" --net "${QUAGGA_NETWORK}" --ip "${QUAGGA_C2_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${CLIENT2_NAME}" "${CLIENTIMAGE2}"
 
 # Now run the up scripts
 docker exec -it "${HA1_MASTER_NAME}" /start-ha1-master.sh
 docker exec -it "${HA1_SLAVE_NAME}" /start-ha1-slave.sh
 docker exec -it "${HA2_MASTER_NAME}" /start-ha2-master.sh
 docker exec -it "${HA2_SLAVE_NAME}" /start-ha2-slave.sh
-docker exec -it "${CLIENT_NAME}" /startvpnclient.sh
+docker exec -it "${CLIENT1_NAME}" /startvpnclient1.sh
+docker exec -it "${CLIENT2_NAME}" /startvpnclient2.sh
 
 echo "Finished"

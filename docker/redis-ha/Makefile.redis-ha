@@ -18,11 +18,12 @@ DOCKER_REDIS_HA1_MASTER=strongswan-container-fun/redis-ha-vpnserver-1-master
 DOCKER_REDIS_HA1_SLAVE=strongswan-container-fun/redis-ha-vpnserver-1-slave
 DOCKER_REDIS_HA2_MASTER=strongswan-container-fun/redis-ha-vpnserver-2-master
 DOCKER_REDIS_HA2_SLAVE=strongswan-container-fun/redis-ha-vpnserver-2-slave
-DOCKER_REDIS_VPNCLIENT=strongswan-container-fun/redis-ha-vpnclient
+DOCKER_REDIS_VPNCLIENT1=strongswan-container-fun/redis-ha-vpnclient-1
+DOCKER_REDIS_VPNCLIENT2=strongswan-container-fun/redis-ha-vpnclient-2
 
 # The StrongSwan repository and commit to use
 BA_STRONGSWAN_REPO_URL=https://wwwin-github.cisco.com/kmestery/strongswan.git
-BA_STRONGSWAN_COMMIT=redis-5.5.1dr4
+BA_STRONGSWAN_COMMIT=redis
 
 .PHONY: docker-build-redis-ha-strongswan
 docker-build-redis-ha-strongswan: docker-build-base
@@ -38,11 +39,12 @@ docker-build-redis-ha: docker-build-redis-ha-strongswan docker-build-redis-ha-vp
 	@cd docker/redis-ha && ${DOCKERBUILD} -t ${DOCKER_REDIS_HA1_SLAVE} -f Dockerfile.ha-vpnserver-1-slave .
 	@cd docker/redis-ha && ${DOCKERBUILD} -t ${DOCKER_REDIS_HA2_MASTER} -f Dockerfile.ha-vpnserver-2-master .
 	@cd docker/redis-ha && ${DOCKERBUILD} -t ${DOCKER_REDIS_HA2_SLAVE} -f Dockerfile.ha-vpnserver-2-slave .
-	@cd docker/redis-ha && ${DOCKERBUILD} -t ${DOCKER_REDIS_VPNCLIENT} -f Dockerfile.ha-vpnclient .
+	@cd docker/redis-ha && ${DOCKERBUILD} -t ${DOCKER_REDIS_VPNCLIENT1} -f Dockerfile.ha-vpnclient-1 .
+	@cd docker/redis-ha && ${DOCKERBUILD} -t ${DOCKER_REDIS_VPNCLIENT2} -f Dockerfile.ha-vpnclient-2 .
 
 .PHONY: run-redis-ha
 run-redis-ha:
-	@cd ./docker/redis-ha && ./runme.sh ${DOCKER_REDIS_HA1_MASTER} ${DOCKER_REDIS_HA1_SLAVE} ${DOCKER_REDIS_HA2_MASTER} ${DOCKER_REDIS_HA2_SLAVE} ${DOCKER_REDIS_VPNCLIENT}
+	@cd ./docker/redis-ha && ./runme.sh ${DOCKER_REDIS_HA1_MASTER} ${DOCKER_REDIS_HA1_SLAVE} ${DOCKER_REDIS_HA2_MASTER} ${DOCKER_REDIS_HA2_SLAVE} ${DOCKER_REDIS_VPNCLIENT1} ${DOCKER_REDIS_VPNCLIENT2}
 
 .PHONY: test-redis-ha
 test-redis-ha:
@@ -54,4 +56,4 @@ remove-redis-ha:
 	@docker exec -it ha1s iptables -D INPUT 1
 	@docker exec -it ha2m iptables -D INPUT 1
 	@docker exec -it ha2s iptables -D INPUT 1
-	@docker rm -f redis ha1m ha1s ha2m ha2s client quagga
+	@docker rm -f redis ha1m ha1s ha2m ha2s client2 client1 quagga

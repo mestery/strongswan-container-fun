@@ -5,6 +5,7 @@ ADD exabgp/entrypoint.sh /
 ADD exabgp/exabgp.conf.ha1-slave /usr/etc/exabgp/
 COPY start-ha1-slave.sh /
 COPY dummystart.sh /
+COPY reload.sh /
 
 ENTRYPOINT /dummystart.sh
 VOLUME ["/usr/etc/exabgp"]

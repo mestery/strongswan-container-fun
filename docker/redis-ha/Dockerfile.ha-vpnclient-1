@@ -1,0 +1,9 @@
+FROM strongswan-container-fun/redis-ha-strongswan
+MAINTAINER mestery@mestery.com
+
+COPY startvpnclient1.sh /
+COPY scale.sh /
+COPY dummystart.sh /
+COPY reload.sh /
+
+ENTRYPOINT /dummystart.sh

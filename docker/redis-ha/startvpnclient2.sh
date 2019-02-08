@@ -19,7 +19,7 @@ conn net-net
         right=${SSWAN_ANYCAST_IP}
         rightsubnet=0.0.0.0/0
         rightauth=psk
-        left=${QUAGGA_C_IP}
+        left=${QUAGGA_C2_IP}
         leftauth=psk
         auto=add
 EOL
@@ -32,7 +32,7 @@ sudo mv /tmp/ipsec.secrets /etc/ipsec.secrets
 
 # Modify the default route
 route delete default
-route add default gw 10.124.223.251
+route add default gw "${QUAGGA_Q_IP}"
 
 mkdir -p /etc/ipsec.d/run
 ipsec start && sleep 5
