@@ -46,3 +46,11 @@ From there, you can examine the BGP session and routes:
 show bgp summary
 show ip bgp
 ```
+
+Logging into a StrongSwan node (ha1m, ha1s, ha2m, or ha2s) and accessing redis
+using the CLI requires you to pass `-h 10.5.5.10` to redis-cli since redis is not
+running locally.
+
+On client1 or client2, there is a script located at /scale.sh which allows you
+to build out clients. Modify `MAXCOUNT` at the top of the script to change the
+number of clients you create.
