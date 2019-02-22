@@ -1,18 +1,12 @@
-StrongSwan Session Scale Testing
-================================
+JITIKE Container Testing
+========================
 
 This directory contains Dockerfiles and scripts to build, run and test
 the following containers:
-* A StrongSwan container with the HA plugin enabled, operating as a
-  master node.
-* A StrongSwan container with the new JitIke plugin enabled, operating
-  as a HA slave and integrating with Redis.
+* Two StrongSwan containers with the JITIKE plugin enabled.
+* Two StrongSwan client containers.
 * A redis container.
-* A haclient container to run the client VPN.
-* A hafarend container running a container behind the VPN.
-
-These do not run VPP, they use the standard StrongSwan Linux kernel
-dataplanes.
+* A Quagga container for routing between clients and servers.
 
 Note that in the client container, we use network namespaces to run a
 per-client ipsec. That configuration is handled roughly by the instructions
@@ -47,9 +41,9 @@ show bgp summary
 show ip bgp
 ```
 
-Logging into a StrongSwan node (ha1m, ha1s, ha2m, or ha2s) and accessing redis
-using the CLI requires you to pass `-h 10.5.5.10` to redis-cli since redis is not
-running locally.
+Logging into a StrongSwan node (ike1 or ike2) and accessing redis using the CLI
+requires you to pass `-h 10.5.5.10` to redis-cli since redis is not running
+locally.
 
 On client1 or client2, there is a script located at /scale.sh which allows you
 to build out clients. Modify `MAXCOUNT` at the top of the script to change the
