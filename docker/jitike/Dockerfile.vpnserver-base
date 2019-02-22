@@ -1,4 +1,4 @@
-FROM strongswan-container-fun/redis-ha-strongswan
+FROM strongswan-container-fun/jitike-strongswan
 MAINTAINER mestery@mestery.com
 
 RUN yum -y install python34 python-devel python34-setuptools python-pip \

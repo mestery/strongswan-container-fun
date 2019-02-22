@@ -3,7 +3,7 @@ MAINTAINER mestery@mestery.com
 
 ADD exabgp/entrypoint.sh /
 ADD exabgp/exabgp.conf.ha1-master /usr/etc/exabgp/
-COPY start-ha1-master.sh /
+COPY start-ike1.sh /
 COPY dummystart.sh /
 COPY reload.sh /
 

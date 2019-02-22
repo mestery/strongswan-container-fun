@@ -16,8 +16,8 @@
 # shellcheck disable=SC1091
 source env.list
 
-HA1_MASTER_IMAGE=$1
-HA2_MASTER_IMAGE=$2
+JITIKE_IKE1_IMAGE=$1
+JITIKE_IKE2_IMAGE=$2
 CLIENTIMAGE1=$3
 CLIENTIMAGE2=$4
 
@@ -61,20 +61,20 @@ docker exec -it quagga route add -host 10.15.15.15/32 dev eth0
 docker network connect --ip "${QUAGGA_Q_IP}" "${QUAGGA_NETWORK}" "${QUAGGA_NAME}"
 
 # Start the StrongSwan Server containers
-docker run --privileged --mac-address "${SERVER1_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA1_MASTER_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA1_MASTER_NAME}" "${HA1_MASTER_IMAGE}"
-docker run --privileged --mac-address "${SERVER3_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA2_MASTER_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA2_MASTER_NAME}" "${HA2_MASTER_IMAGE}"
+docker run --privileged --mac-address "${SERVER1_MAC}" --net "${SSWAN_NETWORK}" --ip "${JITIKE_IKE1_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${JITIKE_IKE1_NAME}" "${JITIKE_IKE1_IMAGE}"
+docker run --privileged --mac-address "${SERVER3_MAC}" --net "${SSWAN_NETWORK}" --ip "${JITIKE_IKE2_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${JITIKE_IKE2_NAME}" "${JITIKE_IKE2_IMAGE}"
 
 # Connect the redis network
-docker network connect --ip "${REDIS_HA1_MASTER_IP}" "${REDIS_NETWORK}" "${HA1_MASTER_NAME}"
-docker network connect --ip "${REDIS_HA2_MASTER_IP}" "${REDIS_NETWORK}" "${HA2_MASTER_NAME}"
+docker network connect --ip "${REDIS_HA1_MASTER_IP}" "${REDIS_NETWORK}" "${JITIKE_IKE1_NAME}"
+docker network connect --ip "${REDIS_HA2_MASTER_IP}" "${REDIS_NETWORK}" "${JITIKE_IKE2_NAME}"
 
 # Run the client containers
 docker run --privileged --mac-address "${CLIENT1_MAC}" --net "${QUAGGA_NETWORK}" --ip "${QUAGGA_C1_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${CLIENT1_NAME}" "${CLIENTIMAGE1}"
 docker run --privileged --mac-address "${CLIENT2_MAC}" --net "${QUAGGA_NETWORK}" --ip "${QUAGGA_C2_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${CLIENT2_NAME}" "${CLIENTIMAGE2}"
 
 # Now run the up scripts
-docker exec -it "${HA1_MASTER_NAME}" /start-ha1-master.sh
-docker exec -it "${HA2_MASTER_NAME}" /start-ha2-master.sh
+docker exec -it "${JITIKE_IKE1_NAME}" /start-ike1.sh
+docker exec -it "${JITIKE_IKE2_NAME}" /start-ike2.sh
 docker exec -it "${CLIENT1_NAME}" /startvpnclient1.sh
 docker exec -it "${CLIENT2_NAME}" /startvpnclient2.sh
 

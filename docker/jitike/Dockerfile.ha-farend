@@ -1,4 +1,4 @@
-FROM strongswan-container-fun/redis-ha-strongswan
+FROM strongswan-container-fun/jitike-strongswan
 MAINTAINER mestery@mestery.com
 
 COPY startfarend.sh /

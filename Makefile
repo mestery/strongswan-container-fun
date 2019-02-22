@@ -22,7 +22,7 @@ default: all
 # Include Makefiles
 include docker/base/Makefile.base
 include docker/ha-scale-vpn/Makefile.ha-scale-vpn
-include docker/redis-ha/Makefile.redis-ha
+include docker/jitike/Makefile.jitike
 include docker/anycast/Makefile.anycast
 
 # Setup proxies for docker build
@@ -49,7 +49,7 @@ all: check docker-build
 check:
 	@shellcheck `find . -name "*.sh"`
 
-docker-build: docker-build-ha-scale-vpn docker-build-redis-ha docker-build-anycast
+docker-build: docker-build-ha-scale-vpn docker-build-jitike docker-build-anycast
 
 # Travis
 .PHONY: travis
@@ -69,7 +69,7 @@ travis:
 # NOTE: We do not run ha-scale-vpn by default here because it has issues in travis-ci.
 #       See #31 for more details.
 .PHONY: run
-run: run-ha-scale-vpn run-redis-ha run-anycast
+run: run-ha-scale-vpn run-jitike run-anycast
 
 # NOTE: We do not test ha-scale-vpn by default here because it has issues in travis-ci.
 #       See #31 for more details.

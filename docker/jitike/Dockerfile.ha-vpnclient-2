@@ -1,7 +1,7 @@
-FROM strongswan-container-fun/redis-ha-strongswan
+FROM strongswan-container-fun/jitike-strongswan
 MAINTAINER mestery@mestery.com
 
-COPY startvpnclient1.sh /
+COPY startvpnclient2.sh /
 COPY scale.sh /
 COPY dummystart.sh /
 COPY reload.sh /

@@ -1,0 +1,53 @@
+# Copyright (c) 2018 Cisco and/or its affiliates.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at:
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+DOCKER_JITIKE_STRONGSWAN=strongswan-container-fun/jitike-strongswan
+DOCKER_JITIKE_VPN_BASE=strongswan-container-fun/vpnserver-base
+DOCKER_JITIKE_IKE1=strongswan-container-fun/jitike-ike1
+DOCKER_JITIKE_IKE2=strongswan-container-fun/jitike-ike2
+DOCKER_JITIKE_VPNCLIENT1=strongswan-container-fun/jitike-vpnclient-1
+DOCKER_JITIKE_VPNCLIENT2=strongswan-container-fun/jitike-vpnclient-2
+
+# The StrongSwan repository and commit to use
+BA_STRONGSWAN_REPO_URL=https://wwwin-github.cisco.com/kmestery/strongswan.git
+BA_STRONGSWAN_COMMIT=redis
+
+.PHONY: docker-build-jitike-strongswan
+docker-build-jitike-strongswan: docker-build-base
+	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_STRONGSWAN} -f Dockerfile.strongswan --build-arg STRONGSWAN_REPO_URL=${BA_STRONGSWAN_REPO_URL} --build-arg STRONGSWAN_COMMIT=${BA_STRONGSWAN_COMMIT} .
+
+.PHONY: docker-build-jitike-vpnserver-base
+docker-build-jitike-vpnserver-base:
+	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_VPN_BASE} -f Dockerfile.vpnserver-base .
+
+.PHONY: docker-build-jitike
+docker-build-jitike: docker-build-jitike-strongswan docker-build-jitike-vpnserver-base
+	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_IKE1} -f Dockerfile.jitike-ike1 .
+	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_IKE2} -f Dockerfile.jitike-ike2 .
+	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_VPNCLIENT1} -f Dockerfile.ha-vpnclient-1 .
+	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_VPNCLIENT2} -f Dockerfile.ha-vpnclient-2 .
+
+.PHONY: run-jitike
+run-jitike:
+	@cd ./docker/jitike && ./runme.sh ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2} ${DOCKER_JITIKE_VPNCLIENT1} ${DOCKER_JITIKE_VPNCLIENT2}
+
+.PHONY: test-jitike
+test-jitike:
+	@docker exec -it haclient ping 10.224.226.51 -c 5
+
+.PHONY: remove-jitike
+remove-jitike:
+	@docker exec -it ike1 iptables -D INPUT 1
+	@docker exec -it ike2 iptables -D INPUT 1
+	@docker rm -f redis ike1 ike2 client1 client2 quagga

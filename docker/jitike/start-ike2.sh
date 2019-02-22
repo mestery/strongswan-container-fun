@@ -52,10 +52,10 @@ jitike {
     # Whether to load the plugin. Can also be an integer to increase the
     # priority of this plugin.
     load = yes
-    local = ${SSWAN_HA2_MASTER_IP}
+    local = ${JITIKE_IKE2_IP}
     monitor = no
     # pools =
-    remote = ${SSWAN_HA2_SLAVE_IP}
+    remote = ${JITIKE_IKE2_IP_SLAVE}
     resync = yes
     # secret =
     segment_count = 1
@@ -98,40 +98,9 @@ cat >/tmp/ipsec.secrets << EOL
 EOL
 sudo mv /tmp/ipsec.secrets /etc/ipsec.secrets
 
-# Setup keepalived
-cat > /etc/keepalived/keepalived.conf << EOL
-! Configuration File for keepalived
-
-vrrp_sync_group VG1 {
-  group {
-    VI_1
-    VI_2
-  }
-}
-
-vrrp_instance VI_1 {
-  state BACKUP
-  interface eth0
-  virtual_router_id 52
-  priority 100
-  advert_int 1
-  nopreempt
-  authentication {
-    auth_type PASS
-    auth_pass Vpp123
-  }
-  virtual_ipaddress {
-    ${SSWAN_HA2_VIP}/24 brd 10.35.35.255 dev eth0
-  }
-}
-EOL
-
 # Setup the cluster IP
 ip address add "${SSWAN_HA2_VIP}"/24 dev eth0
 iptables -A INPUT -d "${SSWAN_HA2_VIP}" -i eth0 -j CLUSTERIP --new --hashmode sourceip --clustermac "${SSWAN_HA2_VIP_MAC}" --total-nodes 2 --local-node 2 --hash-init 0
-
-# Start keepalived
-#keepalived
 
 mkdir -p /etc/ipsec.d/run
 ipsec start
