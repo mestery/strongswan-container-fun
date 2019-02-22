@@ -23,13 +23,13 @@ StrongSwan HA Scale VPN
 
 See the [README.md](docker/ha-scale-vpn/README.md) for more information.
 
-Redis-HA Setup
-==============
+JITIKE Setup
+============
 
-To build this setup: `make docker-build-redis-ha`
+To build this setup: `make docker-build-jitike`
 
-To run the setup: `make run-redis-ha`
+To run the setup: `make run-jitike`
 
-To remove this setup: `make remove-redis-ha`
+To remove this setup: `make remove-jitike`
 
-See the [README.md](docker/redis-ha/README.md) for more information.
+See the [README.md](docker/jitike/README.md) for more information.
