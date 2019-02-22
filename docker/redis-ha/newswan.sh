@@ -40,17 +40,6 @@ perform_reload() {
     docker exec -i "${1}" /reload.sh
 }
 
-#while IFS= read -r dhost
-#do
-#    perform_reload "${dhost}" &
-#done < "${HOSTFILE}"
-
-# Do the slaves first
-perform_reload ha1s &
-perform_reload ha2s &
-wait
-
-# Now do the masters
 perform_reload ha1m &
 perform_reload ha2m &
 wait

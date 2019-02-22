@@ -53,7 +53,7 @@ jitike {
     # priority of this plugin.
     load = yes
     local = ${SSWAN_HA2_MASTER_IP}
-    monitor = yes
+    monitor = no
     # pools =
     remote = ${SSWAN_HA2_SLAVE_IP}
     resync = yes
@@ -131,7 +131,7 @@ ip address add "${SSWAN_HA2_VIP}"/24 dev eth0
 iptables -A INPUT -d "${SSWAN_HA2_VIP}" -i eth0 -j CLUSTERIP --new --hashmode sourceip --clustermac "${SSWAN_HA2_VIP_MAC}" --total-nodes 2 --local-node 2 --hash-init 0
 
 # Start keepalived
-keepalived
+#keepalived
 
 mkdir -p /etc/ipsec.d/run
 ipsec start

@@ -17,11 +17,9 @@
 source env.list
 
 HA1_MASTER_IMAGE=$1
-HA1_SLAVE_IMAGE=$2
-HA2_MASTER_IMAGE=$3
-HA2_SLAVE_IMAGE=$4
-CLIENTIMAGE1=$5
-CLIENTIMAGE2=$6
+HA2_MASTER_IMAGE=$2
+CLIENTIMAGE1=$3
+CLIENTIMAGE2=$4
 
 # Create the redis network
 echo "Looking for ${REDIS_NETWORK}"
@@ -64,15 +62,11 @@ docker network connect --ip "${QUAGGA_Q_IP}" "${QUAGGA_NETWORK}" "${QUAGGA_NAME}
 
 # Start the StrongSwan Server containers
 docker run --privileged --mac-address "${SERVER1_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA1_MASTER_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA1_MASTER_NAME}" "${HA1_MASTER_IMAGE}"
-docker run --privileged --mac-address "${SERVER2_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA1_SLAVE_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA1_SLAVE_NAME}" "${HA1_SLAVE_IMAGE}"
 docker run --privileged --mac-address "${SERVER3_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA2_MASTER_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA2_MASTER_NAME}" "${HA2_MASTER_IMAGE}"
-docker run --privileged --mac-address "${SERVER4_MAC}" --net "${SSWAN_NETWORK}" --ip "${SSWAN_HA2_SLAVE_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${HA2_SLAVE_NAME}" "${HA2_SLAVE_IMAGE}"
 
 # Connect the redis network
 docker network connect --ip "${REDIS_HA1_MASTER_IP}" "${REDIS_NETWORK}" "${HA1_MASTER_NAME}"
-docker network connect --ip "${REDIS_HA1_SLAVE_IP}" "${REDIS_NETWORK}" "${HA1_SLAVE_NAME}"
 docker network connect --ip "${REDIS_HA2_MASTER_IP}" "${REDIS_NETWORK}" "${HA2_MASTER_NAME}"
-docker network connect --ip "${REDIS_HA2_SLAVE_IP}" "${REDIS_NETWORK}" "${HA2_SLAVE_NAME}"
 
 # Run the client containers
 docker run --privileged --mac-address "${CLIENT1_MAC}" --net "${QUAGGA_NETWORK}" --ip "${QUAGGA_C1_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${CLIENT1_NAME}" "${CLIENTIMAGE1}"
@@ -80,9 +74,7 @@ docker run --privileged --mac-address "${CLIENT2_MAC}" --net "${QUAGGA_NETWORK}"
 
 # Now run the up scripts
 docker exec -it "${HA1_MASTER_NAME}" /start-ha1-master.sh
-docker exec -it "${HA1_SLAVE_NAME}" /start-ha1-slave.sh
 docker exec -it "${HA2_MASTER_NAME}" /start-ha2-master.sh
-docker exec -it "${HA2_SLAVE_NAME}" /start-ha2-slave.sh
 docker exec -it "${CLIENT1_NAME}" /startvpnclient1.sh
 docker exec -it "${CLIENT2_NAME}" /startvpnclient2.sh
 
