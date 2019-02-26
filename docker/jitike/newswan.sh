@@ -40,8 +40,8 @@ perform_reload() {
     docker exec -i "${1}" /reload.sh
 }
 
-perform_reload ha1m &
-perform_reload ha2m &
+perform_reload ike1 &
+perform_reload ike2 &
 wait
 
 echo "All host upgraded"
