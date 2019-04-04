@@ -1,0 +1,9 @@
+FROM debian:stretch
+MAINTAINER mestery@mestery.com
+
+ARG REPO=release
+
+RUN apt-get update && \
+    apt-get install -y sudo kmod iproute2 net-tools socat iperf3 tcpdump mtr && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*

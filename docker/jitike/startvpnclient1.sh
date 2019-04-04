@@ -51,6 +51,8 @@ conn net-net
         left=${QUAGGA_C1_IP}
         leftauth=psk
         auto=add
+        dpdaction=restart
+        dpddelay=10s
 EOL
 sudo mv /tmp/ipsec.conf /etc/ipsec.conf
 

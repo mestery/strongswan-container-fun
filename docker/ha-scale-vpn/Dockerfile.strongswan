@@ -1,4 +1,4 @@
-FROM strongswan-container-fun/base
+FROM strongswan-container-fun/base-centos
 MAINTAINER mestery@mestery.com
 
 ARG STRONGSWAN_REPO_URL

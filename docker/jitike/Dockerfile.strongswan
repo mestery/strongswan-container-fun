@@ -1,66 +1,59 @@
-FROM strongswan-container-fun/base
+FROM strongswan-container-fun/base-debian
 MAINTAINER mestery@mestery.com
 
 ARG STRONGSWAN_REPO_URL
 ARG STRONGSWAN_COMMIT
+ARG PROTO_REPO_URL
+ARG PROTO_COMMIT
 
-RUN yum -y install gmp-devel gperftools-devel gperftools-libs gperftools gperf keepalived && \
-    yum -y install redis hiredis hiredis-devel jansson jansson-devel libevent libevent-devel libcurl-devel systemd systemd-devel openssl-devel libgcrypt-devel pam-devel iptables-devel libcap-devel && \
-    yum -y group install "Development Tools" && \
-    yum clean all && \
-    rm -rf /var/cache/yum && \
+RUN echo "deb http://deb.debian.org/debian stretch-backports main contrib non-free" >> /etc/apt/sources.list
+
+RUN apt-get update && \
+    apt-get -y install redis-tools libgmp3-dev gperf keepalived \
+      libjansson-dev libevent-dev libcurl4-openssl-dev libsystemd-dev libssl-dev libgcrypt20-dev libpam0g-dev iptables iptables-dev libcap-dev wget \
+      make binutils gcc automake autoconf git libprotobuf-dev libprotobuf-c-dev protobuf-compiler protobuf-c-compiler && \
+    apt-get install -y  build-essential      \
+      libcurl4-openssl-dev \
+      wget                 \
+      checkinstall         \
+      patch                \
+      autoconf             \
+      libtool              \
+      pkg-config           \
+      gettext              \
+      libgmp-dev           \
+      gperf                \
+      libhiredis-dev=0.14.0-3~bpo9+1 \
+      bison                \
+      flex                 \
+      libevent-dev         \
+      libjansson-dev       \
+      systemd              \
+      libsystemd-dev       \
+      libssl-dev           \
+      libgcrypt11-dev      \
+      libpam0g-dev         \
+      libiptc-dev          \
+      libprotobuf-c-dev    \
+      protobuf-compiler    \
+      protobuf-c-compiler && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    cd .. && \
+    git clone ${PROTO_REPO_URL} && \
+    cd cloud-vpn-protobuf && \
+    mkdir -p /opt/src/cloud-vpn-protobuf/esp && \
+    mkdir -p /opt/src/cloud-vpn-protobuf/ike && \
+    git fetch && git checkout ${PROTO_COMMIT} && \
+    make build install && \
+    cd .. && \
+    mkdir -p version artifacts && \
     git clone ${STRONGSWAN_REPO_URL} && \
-    cd strongswan && \
+    cd cloud-vpn-strongswan && \
     git fetch && \
     git checkout ${STRONGSWAN_COMMIT} && \
-    ./autogen.sh && \
-    ./configure --libdir=/usr/lib --libexecdir=/usr/lib \
-                --sysconfdir=/etc \
-                --with-piddir=/etc/ipsec.d/run \
-                --enable-libipsec \
-                --enable-jitike \
-                --enable-vici \
-                --disable-farp \
-                --enable-swanctl \
-                --enable-sha1 \
-                --enable-save-keys \
-                --enable-connmark \
-                --enable-aesni \
-                --enable-systemd \
-                --enable-addrblock \
-                --enable-agent \
-                --enable-bypass-lan \
-                --enable-ccm \
-                --enable-certexpire \
-                --enable-cmd \
-                --enable-ctr \
-                --enable-curl \
-                --enable-eap-aka \
-                --enable-eap-gtc \
-                --enable-eap-identity \
-                --enable-eap-md5 \
-                --enable-eap-mschapv2 \
-                --enable-eap-radius \
-                --enable-eap-tls \
-                --enable-eap-tnc \
-                --enable-eap-ttls \
-                --enable-error-notify \
-                --enable-gcm \
-                --enable-gcrypt \
-                --enable-ha \
-                --enable-jitike \
-                --enable-led \
-                --enable-lookip \
-                --enable-mediation \
-                --enable-openssl \
-                --enable-pkcs11 \
-                --enable-xauth-eap \
-                --enable-xauth-pam \
-                --enable-blowfish \
-                --enable-rdrand --enable-aesni \
-                --with-capabilities=libcap \
-                --enable-dhcp \
-                --enable-af-alg \
-                --enable-systemd --enable-swanctl && \
-    make && \
-    make install
+    cd .. && \
+    ./cloud-vpn-strongswan/ci/tasks/build.sh && \
+    cd /tmp && \
+    tar xvzf /artifacts/*.tgz && \
+    dpkg -i build/*.deb

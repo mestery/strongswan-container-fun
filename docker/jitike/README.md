@@ -18,6 +18,12 @@ The configuration of the container is handled by the `env.list` file found
 in this directory. To change this configuration, you can modify this file or
 pass these individually on the command line when launching this container.
 
+Before Building
+---------------
+
+Make sure to set the environment variables `GH_USERNAME` and `GH_API_TOKEN` to relevant
+values.
+
 Network Layout
 --------------
 

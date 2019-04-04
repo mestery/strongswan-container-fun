@@ -12,8 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DOCKER_VPP_BASE=strongswan-container-fun/base
+DOCKER_VPP_BASE_DEBIAN=strongswan-container-fun/base-debian
+DOCKER_VPP_BASE_CENTOS=strongswan-container-fun/base-centos
 
-.PHONY: docker-build-base
-docker-build-base:
-	@cd docker/base && ${DOCKERBUILD} -t ${DOCKER_VPP_BASE} -f Dockerfile.base .
+.PHONY: docker-build-base-centos
+docker-build-base-centos:
+	@cd docker/base && ${DOCKERBUILD} -t ${DOCKER_VPP_BASE_CENTOS} -f Dockerfile.base-centos .
+
+.PHONY: docker-build-base-debian
+docker-build-base-debian:
+	@cd docker/base && ${DOCKERBUILD} -t ${DOCKER_VPP_BASE_DEBIAN} -f Dockerfile.base-debian .

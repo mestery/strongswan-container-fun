@@ -20,12 +20,18 @@ DOCKER_JITIKE_VPNCLIENT1=strongswan-container-fun/jitike-vpnclient-1
 DOCKER_JITIKE_VPNCLIENT2=strongswan-container-fun/jitike-vpnclient-2
 
 # The StrongSwan repository and commit to use
-BA_STRONGSWAN_REPO_URL=https://wwwin-github.cisco.com/kmestery/strongswan.git
-BA_STRONGSWAN_COMMIT=redis
+#BA_STRONGSWAN_REPO_URL=https://wwwin-github.cisco.com/kmestery/strongswan.git
+#BA_STRONGSWAN_COMMIT=redis
+BA_STRONGSWAN_REPO_URL=https://${GH_USERNAME}:${GH_API_TOKEN}@wwwin-github.cisco.com/streamline/cloud-vpn-strongswan.git
+BA_STRONGSWAN_COMMIT=pr-netv-209
+BA_PROTO_REPO_URL=https://${GH_USERNAME}:${GH_API_TOKEN}@wwwin-github.cisco.com/streamline/cloud-vpn-protobuf.git
+BA_PROTO_COMMIT=master
+BA_GH_API_TOKEN=${GH_API_TOKEN}
+BA_GH_USERNAME=${GH_USERNAME}
 
 .PHONY: docker-build-jitike-strongswan
-docker-build-jitike-strongswan: docker-build-base
-	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_STRONGSWAN} -f Dockerfile.strongswan --build-arg STRONGSWAN_REPO_URL=${BA_STRONGSWAN_REPO_URL} --build-arg STRONGSWAN_COMMIT=${BA_STRONGSWAN_COMMIT} .
+docker-build-jitike-strongswan: docker-build-base-debian
+	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_STRONGSWAN} -f Dockerfile.strongswan --build-arg STRONGSWAN_REPO_URL=${BA_STRONGSWAN_REPO_URL} --build-arg STRONGSWAN_COMMIT=${BA_STRONGSWAN_COMMIT} --build-arg PROTO_REPO_URL=${BA_PROTO_REPO_URL} --build-arg PROTO_COMMIT=${BA_PROTO_COMMIT} .
 
 .PHONY: docker-build-jitike-vpnserver-base
 docker-build-jitike-vpnserver-base:
@@ -48,6 +54,4 @@ test-jitike:
 
 .PHONY: remove-jitike
 remove-jitike:
-	@docker exec -it ike1 iptables -D INPUT 1
-	@docker exec -it ike2 iptables -D INPUT 1
 	@docker rm -f redis ike1 ike2 client1 client2 quagga
