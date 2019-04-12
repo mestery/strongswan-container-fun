@@ -23,7 +23,7 @@ DOCKER_JITIKE_VPNCLIENT2=strongswan-container-fun/jitike-vpnclient-2
 #BA_STRONGSWAN_REPO_URL=https://wwwin-github.cisco.com/kmestery/strongswan.git
 #BA_STRONGSWAN_COMMIT=redis
 BA_STRONGSWAN_REPO_URL=https://${GH_USERNAME}:${GH_API_TOKEN}@wwwin-github.cisco.com/streamline/cloud-vpn-strongswan.git
-BA_STRONGSWAN_COMMIT=pr-netv-209
+BA_STRONGSWAN_COMMIT=master
 BA_PROTO_REPO_URL=https://${GH_USERNAME}:${GH_API_TOKEN}@wwwin-github.cisco.com/streamline/cloud-vpn-protobuf.git
 BA_PROTO_COMMIT=master
 BA_GH_API_TOKEN=${GH_API_TOKEN}
@@ -47,6 +47,14 @@ docker-build-jitike: docker-build-jitike-strongswan docker-build-jitike-vpnserve
 .PHONY: run-jitike
 run-jitike:
 	@cd ./docker/jitike && ./runme.sh ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2} ${DOCKER_JITIKE_VPNCLIENT1} ${DOCKER_JITIKE_VPNCLIENT2}
+
+.PHONY: start-ike1
+start-ike1:
+	@cd ./docker/jitike && ./ike-restart.sh 1 ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2}
+
+.PHONY: start-ike2
+start-ike2:
+	@cd ./docker/jitike && ./ike-restart.sh 2 ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2}
 
 .PHONY: test-jitike
 test-jitike:

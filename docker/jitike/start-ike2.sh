@@ -395,6 +395,8 @@ conn net-net
         right=%any
         rightauth=psk
         auto=add
+        dpdaction=restart
+        dpddelay=10s
 EOL
 sudo mv /tmp/ipsec.conf /etc/ipsec.conf
 
