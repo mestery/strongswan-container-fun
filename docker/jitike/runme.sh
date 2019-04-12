@@ -52,7 +52,7 @@ fi
 docker run --name "${REDIS_NAME}" --net "${REDIS_NETWORK}" --ip "${REDIS_SERVER_IP}" -id redis
 
 # Start the quagga container
-docker run --privileged -id --name "${QUAGGA_NAME}" --net="${SSWAN_NETWORK}" --ip="${SSWAN_QUAGGA_IP}" -v `pwd`/quagga:/etc/quagga:rw pierky/quagga
+docker run --privileged -id --name "${QUAGGA_NAME}" --net="${SSWAN_NETWORK}" --ip="${SSWAN_QUAGGA_IP}" -v "$(pwd)"/quagga:/etc/quagga:rw pierky/quagga
 docker exec -it quagga apt-get update
 docker exec -it quagga apt-get install -y net-tools
 docker exec -it quagga route add -host 10.15.15.15/32 dev eth0

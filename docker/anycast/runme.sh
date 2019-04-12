@@ -21,7 +21,7 @@ fi
 
 docker run -d --name client1 --cap-add=NET_ADMIN --privileged --net="${ANYCAST_NETWORK}" --ip="${ANYCASTCLIENT1IP}" any/client1
 docker run -d --name client2 --cap-add=NET_ADMIN --privileged --net="${ANYCAST_NETWORK}" --ip="${ANYCASTCLIENT2IP}" any/client2
-docker run -d --name server --net="${ANYCAST_NETWORK}" --ip="${ANYCASTSERVERIP}" -v `pwd`/quagga:/etc/quagga:rw pierky/quagga
+docker run -d --name server --net="${ANYCAST_NETWORK}" --ip="${ANYCASTSERVERIP}" -v "$(pwd)"/quagga:/etc/quagga:rw pierky/quagga
 
 echo "Looking for ${REMOTE_NETWORK}"
 EXISTS="$(docker network ls | grep "${REMOTE_NETWORK}")"

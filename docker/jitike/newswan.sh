@@ -31,8 +31,6 @@ HOSTFILE=newswan.txt
 DIFF="$1"
 
 perform_reload() {
-    BDIFF=$(basename ${DIFF})
-
     # Copy the diff file over
     docker cp "${DIFF}" "${1}":/tmp
 
