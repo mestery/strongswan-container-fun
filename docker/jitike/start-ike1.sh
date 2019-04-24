@@ -85,6 +85,9 @@ charon {
     # Size of the IKE_SA hash table.
     ikesa_table_size = 64
 
+    # Whether or not to close client IKE sessions when we exit
+    close_connections_at_exit = false
+
     # Whether to close IKE_SA if the only CHILD_SA closed due to inactivity.
     # inactivity_close_ike = no
 
@@ -327,7 +330,8 @@ charon {
     }
 
     redis {
-        hostname = "${REDIS_SERVER_IP}"
+        redis_hosts = "${REDIS_SERVER_IP1},${REDIS_SERVER_IP2}"
+        alloc_id = 95b0c04d-4087-4f1c-8122-3d552977a8d0
     }
 }
 EOL
@@ -370,7 +374,8 @@ jitike {
     load = yes
 
     redis {
-      hostname = "${REDIS_SERVER_IP}"
+      hostname = "${REDIS_SERVER_IP1}"
+      alloc_id = 95b0c04d-4087-4f1c-8122-3d552977a8d0
     }
 }
 EOL
@@ -395,8 +400,8 @@ conn net-net
         right=%any
         rightauth=psk
         auto=add
-        dpdaction=restart
-        dpddelay=10s
+        #dpdaction=restart
+        #dpddelay=10s
 EOL
 sudo mv /tmp/ipsec.conf /etc/ipsec.conf
 

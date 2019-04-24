@@ -48,8 +48,9 @@ if [ "x${EXISTS}" == "x" ] ; then
 	docker network create "${QUAGGA_NETWORK}" --subnet="${QUAGGA_NETWORK_RANGE}"
 fi
 
-# Start the redis container
-docker run --name "${REDIS_NAME}" --net "${REDIS_NETWORK}" --ip "${REDIS_SERVER_IP}" -id redis
+# Start the redis containers
+docker run --name "${REDIS_NAME1}" --net "${REDIS_NETWORK}" --ip "${REDIS_SERVER_IP1}" -id redis
+docker run --name "${REDIS_NAME2}" --net "${REDIS_NETWORK}" --ip "${REDIS_SERVER_IP2}" -id redis
 
 # Start the quagga container
 docker run --privileged -id --name "${QUAGGA_NAME}" --net="${SSWAN_NETWORK}" --ip="${SSWAN_QUAGGA_IP}" -v "$(pwd)"/quagga:/etc/quagga:rw pierky/quagga

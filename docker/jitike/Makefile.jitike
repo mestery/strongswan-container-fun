@@ -62,4 +62,4 @@ test-jitike:
 
 .PHONY: remove-jitike
 remove-jitike:
-	@docker rm -f redis ike1 ike2 client1 client2 quagga
+	@docker rm -f redis1 redis2 ike1 ike2 client1 client2 quagga
