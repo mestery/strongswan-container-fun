@@ -34,7 +34,13 @@ The built containers are networked as follows:
 Accessing the nodes
 -------------------
 
-To access the Quagga node:
+To access the Quagga node zebra daemon:
+
+```
+docker exec -it quagga telnet 127.0.0.1 2601
+```
+
+To access the Quagga node BGP daemon:
 
 ```
 docker exec -it quagga telnet 127.0.0.1 2605
@@ -47,7 +53,7 @@ show bgp summary
 show ip bgp
 ```
 
-Logging into a StrongSwan node (ike1 or ike2) and accessing redis using the CLI
+Logging into a StrongSwan node (ike1, ike2, or ike3) and accessing redis using the CLI
 requires you to pass `-h 10.5.5.10` to redis-cli since redis is not running
 locally.
 

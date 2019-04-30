@@ -18,8 +18,10 @@ source env.list
 
 JITIKE_IKE1_IMAGE=$1
 JITIKE_IKE2_IMAGE=$2
-CLIENTIMAGE1=$3
-CLIENTIMAGE2=$4
+JITIKE_IKE3_IMAGE=$3
+CLIENTIMAGE1=$4
+CLIENTIMAGE2=$5
+QUAGGA_IMAGE=$6
 
 # Create the redis network
 echo "Looking for ${REDIS_NETWORK}"
@@ -53,21 +55,23 @@ docker run --name "${REDIS_NAME1}" --net "${REDIS_NETWORK}" --ip "${REDIS_SERVER
 docker run --name "${REDIS_NAME2}" --net "${REDIS_NETWORK}" --ip "${REDIS_SERVER_IP2}" -id redis
 
 # Start the quagga container
-docker run --privileged -id --name "${QUAGGA_NAME}" --net="${SSWAN_NETWORK}" --ip="${SSWAN_QUAGGA_IP}" -v "$(pwd)"/quagga:/etc/quagga:rw pierky/quagga
+docker run --privileged -id --name "${QUAGGA_NAME}" --net="${SSWAN_NETWORK}" --ip="${SSWAN_QUAGGA_IP}" -v "$(pwd)"/quagga:/etc/quagga:rw ${QUAGGA_IMAGE}
 docker exec -it quagga apt-get update
 docker exec -it quagga apt-get install -y net-tools
-docker exec -it quagga route add -host 10.15.15.15/32 dev eth0
+#docker exec -it quagga route add -host 10.15.15.15/32 dev eth0
 
 # Attach Quagga to Quagga network
 docker network connect --ip "${QUAGGA_Q_IP}" "${QUAGGA_NETWORK}" "${QUAGGA_NAME}"
 
 # Start the StrongSwan Server containers
 docker run --privileged --mac-address "${SERVER1_MAC}" --net "${SSWAN_NETWORK}" --ip "${JITIKE_IKE1_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${JITIKE_IKE1_NAME}" "${JITIKE_IKE1_IMAGE}"
-docker run --privileged --mac-address "${SERVER3_MAC}" --net "${SSWAN_NETWORK}" --ip "${JITIKE_IKE2_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${JITIKE_IKE2_NAME}" "${JITIKE_IKE2_IMAGE}"
+docker run --privileged --mac-address "${SERVER2_MAC}" --net "${SSWAN_NETWORK}" --ip "${JITIKE_IKE2_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${JITIKE_IKE2_NAME}" "${JITIKE_IKE2_IMAGE}"
+docker run --privileged --mac-address "${SERVER3_MAC}" --net "${SSWAN_NETWORK}" --ip "${JITIKE_IKE3_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${JITIKE_IKE3_NAME}" "${JITIKE_IKE3_IMAGE}"
 
 # Connect the redis network
 docker network connect --ip "${REDIS_HA1_MASTER_IP}" "${REDIS_NETWORK}" "${JITIKE_IKE1_NAME}"
 docker network connect --ip "${REDIS_HA2_MASTER_IP}" "${REDIS_NETWORK}" "${JITIKE_IKE2_NAME}"
+docker network connect --ip "${REDIS_HA3_MASTER_IP}" "${REDIS_NETWORK}" "${JITIKE_IKE3_NAME}"
 
 # Run the client containers
 docker run --privileged --mac-address "${CLIENT1_MAC}" --net "${QUAGGA_NETWORK}" --ip "${QUAGGA_C1_IP}" --cap-add IPC_LOCK --cap-add NET_ADMIN --env-file ./env.list -id --name "${CLIENT1_NAME}" "${CLIENTIMAGE1}"
@@ -76,6 +80,7 @@ docker run --privileged --mac-address "${CLIENT2_MAC}" --net "${QUAGGA_NETWORK}"
 # Now run the up scripts
 docker exec -it "${JITIKE_IKE1_NAME}" /start-ike1.sh
 docker exec -it "${JITIKE_IKE2_NAME}" /start-ike2.sh
+docker exec -it "${JITIKE_IKE3_NAME}" /start-ike3.sh
 docker exec -it "${CLIENT1_NAME}" /startvpnclient1.sh
 docker exec -it "${CLIENT2_NAME}" /startvpnclient2.sh
 

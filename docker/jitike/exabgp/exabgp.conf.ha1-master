@@ -1,7 +1,7 @@
 neighbor 10.35.35.40 {
 	router-id 10.35.35.50;
 	local-address 10.35.35.50;
-	local-as 65040;
+	local-as 65045;
 	peer-as 65040;
 
 	api services {

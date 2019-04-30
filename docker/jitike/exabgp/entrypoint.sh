@@ -30,6 +30,12 @@ if [ "$1" == 'exabgp' ]; then
   if [ -f /usr/local/etc/exabgp/exabgp.conf.ha2-slave ] ; then
     cp /usr/local/etc/exabgp/exabgp.conf.ha2-slave /usr/local/etc/exabgp/exabgp.conf
   fi
+  if [ -f /usr/local/etc/exabgp/exabgp.conf.ha3-master ] ; then
+    cp /usr/local/etc/exabgp/exabgp.conf.ha3-master /usr/local/etc/exabgp/exabgp.conf
+  fi
+  if [ -f /usr/local/etc/exabgp/exabgp.conf.ha3-slave ] ; then
+    cp /usr/local/etc/exabgp/exabgp.conf.ha3-slave /usr/local/etc/exabgp/exabgp.conf
+  fi
 
   # Modify the default route
   route delete default

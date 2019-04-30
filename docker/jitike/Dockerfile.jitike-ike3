@@ -1,0 +1,13 @@
+FROM strongswan-container-fun/vpnserver-base
+MAINTAINER mestery@mestery.com
+
+ADD exabgp/entrypoint.sh /
+ADD exabgp/exabgp.conf.ha3-master /usr/local/etc/exabgp/
+COPY start-ike3.sh /
+COPY dummystart.sh /
+COPY reload.sh /
+COPY transfer.sh /
+
+ENTRYPOINT /dummystart.sh
+VOLUME ["/usr/local/etc/exabgp"]
+EXPOSE 179

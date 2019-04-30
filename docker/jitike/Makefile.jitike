@@ -16,8 +16,10 @@ DOCKER_JITIKE_STRONGSWAN=strongswan-container-fun/jitike-strongswan
 DOCKER_JITIKE_VPN_BASE=strongswan-container-fun/vpnserver-base
 DOCKER_JITIKE_IKE1=strongswan-container-fun/jitike-ike1
 DOCKER_JITIKE_IKE2=strongswan-container-fun/jitike-ike2
+DOCKER_JITIKE_IKE3=strongswan-container-fun/jitike-ike3
 DOCKER_JITIKE_VPNCLIENT1=strongswan-container-fun/jitike-vpnclient-1
 DOCKER_JITIKE_VPNCLIENT2=strongswan-container-fun/jitike-vpnclient-2
+DOCKER_JITIKE_QUAGGA=strongswan-container-fun/jitike-quagga
 
 # The StrongSwan repository and commit to use
 #BA_STRONGSWAN_REPO_URL=https://wwwin-github.cisco.com/kmestery/strongswan.git
@@ -39,22 +41,28 @@ docker-build-jitike-vpnserver-base:
 
 .PHONY: docker-build-jitike
 docker-build-jitike: docker-build-jitike-strongswan docker-build-jitike-vpnserver-base
+	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_QUAGGA} -f Dockerfile.jitike-quagga .
 	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_IKE1} -f Dockerfile.jitike-ike1 .
 	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_IKE2} -f Dockerfile.jitike-ike2 .
+	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_IKE3} -f Dockerfile.jitike-ike3 .
 	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_VPNCLIENT1} -f Dockerfile.ha-vpnclient-1 .
 	@cd docker/jitike && ${DOCKERBUILD} -t ${DOCKER_JITIKE_VPNCLIENT2} -f Dockerfile.ha-vpnclient-2 .
 
 .PHONY: run-jitike
 run-jitike:
-	@cd ./docker/jitike && ./runme.sh ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2} ${DOCKER_JITIKE_VPNCLIENT1} ${DOCKER_JITIKE_VPNCLIENT2}
+	@cd ./docker/jitike && ./runme.sh ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2} ${DOCKER_JITIKE_IKE3} ${DOCKER_JITIKE_VPNCLIENT1} ${DOCKER_JITIKE_VPNCLIENT2} ${DOCKER_JITIKE_QUAGGA}
 
 .PHONY: start-ike1
 start-ike1:
-	@cd ./docker/jitike && ./ike-restart.sh 1 ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2}
+	@cd ./docker/jitike && ./ike-restart.sh 1 ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2} ${DOCKER_JITIKE_IKE3}
 
 .PHONY: start-ike2
 start-ike2:
-	@cd ./docker/jitike && ./ike-restart.sh 2 ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2}
+	@cd ./docker/jitike && ./ike-restart.sh 2 ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2} ${DOCKER_JITIKE_IKE3}
+
+.PHONY: start-ike3
+start-ike3:
+	@cd ./docker/jitike && ./ike-restart.sh 3 ${DOCKER_JITIKE_IKE1} ${DOCKER_JITIKE_IKE2} ${DOCKER_JITIKE_IKE3}
 
 .PHONY: test-jitike
 test-jitike:
@@ -62,4 +70,4 @@ test-jitike:
 
 .PHONY: remove-jitike
 remove-jitike:
-	@docker rm -f redis1 redis2 ike1 ike2 client1 client2 quagga
+	@docker rm -f redis1 redis2 ike1 ike2 ike3 client1 client2 quagga

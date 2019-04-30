@@ -40,6 +40,7 @@ perform_reload() {
 
 perform_reload ike1 &
 perform_reload ike2 &
+perform_reload ike3 &
 wait
 
 echo "All host upgraded"
