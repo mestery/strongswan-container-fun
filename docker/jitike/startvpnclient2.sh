@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# First arg indicates whether or not we want to tail the log at the end
+RUNFROMCOMPOSE=$1
+
 set -xe
 
 mv /etc/strongswan.d/charon-logging.conf /etc/strongswan.d/charon-logging.conf.old
@@ -73,4 +76,6 @@ ipsec up net-net
 # in the case of the ha-scale-vpn containers, we run this script via a "docker
 # exec" command after the container is started, so we'll comment this out for
 # this use case and leave it here as a note in case someone copies this script.
-#tail -f /dev/null
+if [ "${RUNFROMCOMPOSE}" == "compose" ] ; then
+  tail -f /dev/null
+fi
